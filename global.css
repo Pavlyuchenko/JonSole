@@ -1,0 +1,15 @@
+:root {
+    --orange: #ff6600;
+    --black: #100c08;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    min-width: 100vw;
+    min-height: 100vh;
+
+    position: relative;
+}

@@ -1,0 +1,99 @@
+#console-viewport {
+    position: sticky;
+
+    width: 100vw;
+    height: 100vh;
+}
+
+#console {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+
+    display: block;
+
+    width: 800px;
+    height: 600px;
+
+    background-color: #0c0c0c;
+
+    outline: 1px solid var(--black);
+    border: 5px solid #fff;
+    border-top-width: 26px;
+
+    overflow: hidden;
+}
+
+.console-text {
+    width: calc(100% - 12px);
+    height: 18px;
+    font-size: 18px;
+
+    background-color: #0c0c0c;
+    color: #fff;
+
+    padding: 8px 5px;
+
+    outline: none;
+    border: none;
+
+    font-family: monospace;
+
+    caret-color: #0c0c0c;
+}
+
+input:disabled {
+    user-select: none; /* standard syntax */
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
+    pointer-events: none;
+}
+
+.hidden-measurement {
+    position: absolute;
+    visibility: hidden;
+    white-space: pre; /* Preserve spaces and line breaks */
+}
+
+#caret {
+    width: 10px;
+    height: 25px;
+
+    background-color: rgba(130, 255, 10, 0.5);
+
+    position: absolute;
+    top: 5px;
+    left: 22px;
+
+    transition: background-color 0;
+}
+
+.blink {
+    animation: 1.1s blink infinite;
+}
+
+@keyframes blink {
+    0% {
+        background-color: transparent;
+    }
+    49% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: rgba(130, 255, 10, 0.5);
+    }
+    100% {
+        background-color: rgba(130, 255, 10, 0.5);
+    }
+}
+
+.console-response {
+    color: #fff;
+
+    font-family: monospace;
+    margin-left: 5px;
+    font-size: 18px;
+    line-height: 22px;
+}
