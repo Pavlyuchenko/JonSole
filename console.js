@@ -10,7 +10,6 @@ function ensurePrompt(input, starterText) {
 const starterText = "$ ";
 ensurePrompt(consoleText, starterText);
 
-var command;
 var commandHistory = [];
 var historyPosition = 0; // 0 means current command, 1 is the one before that
 
@@ -43,11 +42,12 @@ function getBrowser() {
     }
 }
 
+const tabLength = 4;
+const tab = "&nbsp;".repeat(tabLength);
+const newLine = "<br />";
+
 function helpCmd() {
     let commandsText = "";
-    const tabLength = 4;
-    const tab = "&nbsp;".repeat(tabLength);
-    const newLine = "<br />";
 
     const indent = 20;
 
@@ -76,6 +76,23 @@ function clearCmd() {
     return "";
 }
 
+const socialsOptions = [
+    { name: "github", link: "https://github.com/Pavlyuchenko" },
+    { name: "linkedin", link: "https://www.linkedin.com/in/michal-pavlicek/" },
+    { name: "website", link: "https://michal-pavlicek.cz" },
+];
+function socialsCmd(subcommands, help) {
+    for (let option of socialsOptions) {
+        if (subcommands[0] == option.name) {
+            console.log(option);
+            window.open(option.link);
+            return `Opening my ${option.name} page...`;
+        }
+    }
+
+    return help;
+}
+
 var bashVersion = `Ginger bash, version 0.1-release (x86_64-browser-${getBrowser()})`;
 const commands = [
     {
@@ -99,17 +116,37 @@ const commands = [
         action: clearCmd,
         description: "clears the console",
     },
+    {
+        command: "socials",
+        description: "redirects to my socials, opens in new tab",
+        help: `
+            Usage: socials &lt;subcommand&gt;
+            ${newLine}${newLine}
+            ${tab}redirects to my socials
+            ${newLine}${newLine}
+            Subcommands:${newLine}
+
+            ${socialsOptions.map((opt) => tab + opt.name + newLine).join("")}
+        `,
+        action: socialsCmd,
+    },
+    {
+        command: "screen",
+        description: "test",
+    },
 ];
 function parseCommand(command) {
-    command = command.replace("$", "").trim().split(" ");
+    command = command.replace(starterText, "").trim();
+    let commandArr = command.split(" ");
 
-    let program = command[0];
+    let program = commandArr[0];
     if (program == "") {
         return;
     }
+    let subcommands = commandArr.slice(1);
 
-    if (program != commandHistory[commandHistory.length - 1]) {
-        commandHistory.push(program);
+    if (command != commandHistory[commandHistory.length - 1]) {
+        commandHistory.push(command);
     }
 
     let commandExists = false;
@@ -117,7 +154,12 @@ function parseCommand(command) {
         if (cmd.command == program) {
             commandExists = true;
 
-            const output = cmd.action ? cmd.action() : cmd.return;
+            const output =
+                cmd.help && subcommands.length == 0
+                    ? cmd.help
+                    : cmd.action
+                    ? cmd.action(subcommands, cmd.help)
+                    : cmd.return;
             consoleResponse(output);
             return;
         }
@@ -181,9 +223,25 @@ function addEventListeners(input) {
 
 function syncCarets(e) {
     const position = getCaretPositionInPixels(consoleText, e);
-    document.getElementById("caret").style.left = position + 5 + "px";
+    document.getElementById("caret").style.left = position + 10 + "px";
     document.getElementById("caret").style.top =
         consoleText.offsetTop + 5 + "px";
+}
+
+function whisperer(text, input) {
+    let options = [];
+
+    for (let command of commands) {
+        if (command.command.startsWith(text)) {
+            options.push(command.command);
+        }
+    }
+
+    if (options.length == 1) {
+        input.value = starterText + options[0];
+    } else {
+        consoleResponse(options.map((opt) => tab + opt + newLine).join(""));
+    }
 }
 
 var timeout;
@@ -200,8 +258,7 @@ function onKeyDown(e) {
 
     if (e.key === "Enter") {
         e.preventDefault();
-        consoleText.value = consoleText.value.replace("", "");
-        command = consoleText.value;
+        let command = consoleText.value;
         parseCommand(command);
 
         consoleText.disabled = true;
@@ -230,9 +287,9 @@ function onKeyDown(e) {
         historyPosition = 0;
     } else if (e.key == "Tab") {
         e.preventDefault();
+
+        whisperer(consoleText.value.replace(starterText, ""), consoleText);
     } else if (e.key == "ArrowUp" || e.key == "ArrowDown") {
-        console.log(commandHistory);
-        console.log(historyPosition);
         if (commandHistory.length == 0) {
             return;
         }
