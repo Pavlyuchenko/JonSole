@@ -230,19 +230,30 @@ function onKeyDown(e) {
         historyPosition = 0;
     } else if (e.key == "Tab") {
         e.preventDefault();
-    } else if (e.key == "ArrowUp") {
+    } else if (e.key == "ArrowUp" || e.key == "ArrowDown") {
         console.log(commandHistory);
         console.log(historyPosition);
         if (commandHistory.length == 0) {
             return;
         }
 
-        historyPosition++;
-        consoleText.value =
-            starterText +
-            commandHistory[
-                Math.max(0, commandHistory.length - historyPosition)
-            ];
+        e.key == "ArrowUp" ? historyPosition++ : historyPosition--;
+        historyPosition = Math.max(
+            Math.min(historyPosition, commandHistory.length),
+            0
+        );
+        if (historyPosition == 0) {
+            consoleText.value = starterText;
+        } else {
+            consoleText.value =
+                starterText +
+                commandHistory[
+                    Math.min(
+                        Math.max(0, commandHistory.length - historyPosition),
+                        commandHistory.length
+                    )
+                ];
+        }
 
         setTimeout(() => {
             consoleText.setSelectionRange(

@@ -1,6 +1,9 @@
 :root {
     --orange: #ff6600;
     --black: #100c08;
+
+    --caret-color: var(--orange);
+    --terminal-bg: var(--black);
 }
 
 html,

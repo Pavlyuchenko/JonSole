@@ -15,7 +15,7 @@
     width: 800px;
     height: 600px;
 
-    background-color: #0c0c0c;
+    background-color: var(--terminal-bg);
 
     outline: 1px solid var(--black);
     border: 5px solid #fff;
@@ -29,7 +29,7 @@
     height: 18px;
     font-size: 18px;
 
-    background-color: #0c0c0c;
+    background-color: var(--terminal-bg);
     color: #fff;
 
     padding: 8px 5px;
@@ -39,7 +39,7 @@
 
     font-family: monospace;
 
-    caret-color: #0c0c0c;
+    caret-color: var(--terminal-bg);
 }
 
 input:disabled {
@@ -61,7 +61,8 @@ input:disabled {
     width: 10px;
     height: 25px;
 
-    background-color: rgba(130, 255, 10, 0.5);
+    background-color: var(--caret-color);
+    opacity: 0.65;
 
     position: absolute;
     top: 5px;
@@ -82,10 +83,10 @@ input:disabled {
         background-color: transparent;
     }
     50% {
-        background-color: rgba(130, 255, 10, 0.5);
+        background-color: var(--caret-color);
     }
     100% {
-        background-color: rgba(130, 255, 10, 0.5);
+        background-color: var(--caret-color);
     }
 }
 
