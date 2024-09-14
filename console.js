@@ -11,6 +11,8 @@ const starterText = "$ ";
 ensurePrompt(consoleText, starterText);
 
 var command;
+var commandHistory = [];
+var historyPosition = 0; // 0 means current command, 1 is the one before that
 
 function onInput() {
     ensurePrompt(consoleText, starterText);
@@ -106,6 +108,10 @@ function parseCommand(command) {
         return;
     }
 
+    if (program != commandHistory[commandHistory.length - 1]) {
+        commandHistory.push(program);
+    }
+
     let commandExists = false;
     for (cmd of commands) {
         if (cmd.command == program) {
@@ -173,13 +179,17 @@ function addEventListeners(input) {
     input.addEventListener("input", onInput);
 }
 
+function syncCarets(e) {
+    const position = getCaretPositionInPixels(consoleText, e);
+    document.getElementById("caret").style.left = position + 5 + "px";
+    document.getElementById("caret").style.top =
+        consoleText.offsetTop + 5 + "px";
+}
+
 var timeout;
 function onKeyDown(e) {
     setTimeout(() => {
-        const position = getCaretPositionInPixels(consoleText, e);
-        document.getElementById("caret").style.left = position + 5 + "px";
-        document.getElementById("caret").style.top =
-            consoleText.offsetTop + 5 + "px";
+        syncCarets(e);
     }, 1);
 
     clearTimeout(timeout);
@@ -216,8 +226,31 @@ function onKeyDown(e) {
         newInput.focus();
 
         consoleText = newInput;
+
+        historyPosition = 0;
     } else if (e.key == "Tab") {
         e.preventDefault();
+    } else if (e.key == "ArrowUp") {
+        console.log(commandHistory);
+        console.log(historyPosition);
+        if (commandHistory.length == 0) {
+            return;
+        }
+
+        historyPosition++;
+        consoleText.value =
+            starterText +
+            commandHistory[
+                Math.max(0, commandHistory.length - historyPosition)
+            ];
+
+        setTimeout(() => {
+            consoleText.setSelectionRange(
+                consoleText.value.length,
+                consoleText.value.length
+            );
+            syncCarets(e);
+        }, 1);
     }
 }
 
